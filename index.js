@@ -25,9 +25,20 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    const productsCollection = client.db("productsDB")
+    .collection("products");
+
+app.get('products', async(req, res)=> {
+  const cursor = productsCollection.find();
+  const result = await cursor.toArray();
+  res.send(result)
+})
+
 app.post('/products', async(req, res)=> {
-    const newProduct = req.body;
-    console.log(newProduct)
+    const newProducts = req.body;
+    console.log(newProducts)
+    const result = await productsCollection.insertOne(newProducts);
+    res.send(result)
 })
 
 
@@ -36,7 +47,7 @@ app.post('/products', async(req, res)=> {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
